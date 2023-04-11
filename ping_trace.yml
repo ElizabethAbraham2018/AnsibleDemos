@@ -1,0 +1,44 @@
+---
+
+  - name: PING TEST AND TRACEROUTE
+    hosts: leaf1-DC1
+    connection: ansible.netcommon.network_cli
+    gather_facts: no
+
+    vars:
+      dest: "192.168.0.20"
+      # dest: "192.168.0.21"
+
+    tasks:
+
+    - name: ISSUE PING
+      arista.eos.eos_command:
+        commands: "ping {{ dest }} repeat 2"
+      register: output
+
+    # - name: PARSE PING RESPONSE TO OBTAIN % OF SUCCESS
+    #   ansible.builtin.set_fact:
+    #     ping_loss_pct: "{{ output.stdout.0 | regex_search(' (\\d+)% packet loss') | regex_search('(\\d+)')}}"
+
+    # - name: Alternative option to PARSE PING RESPONSE TO OBTAIN % OF SUCCESS
+    #   ansible.builtin.set_fact:
+    #     ping_loss_pct: "{{ output.stdout.0 | regex_findall(' (\\d+)% packet loss') | first }}"
+
+    - name: Still another alternative option to PARSE PING RESPONSE TO OBTAIN % OF SUCCESS
+      ansible.builtin.set_fact:
+        ping_loss_pct: "{{ output.stdout.0 | regex_search(' (\\d+)% packet loss' , '\\1') }}"
+
+    - name: PRINT value of ping_loss_pct and determine data_type too if students are not too sure
+      ansible.builtin.debug:
+        var: ping_loss_pct
+
+    - name: ISSUE TRACEROUTE when packet loss percentage is greater than 20
+      arista.eos.eos_command:
+        commands: "traceroute {{ dest }} "
+      register: traceroute
+      when: ping_loss_pct | first | int > 20
+
+    - name: DEBUG TRACEROUTE
+      ansible.builtin.debug:
+        var: traceroute
+    

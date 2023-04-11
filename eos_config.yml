@@ -1,0 +1,44 @@
+---
+- name: "PLAY 1 - DEPLOYING SNMP CONFIGURATIONS ON EOS"
+  hosts: leaf1-DC1
+  # connection: "ansible.netcommon.network_cli"
+  gather_facts: false
+  tasks:
+    # - name: "ENSURE SNMP COMMANDS EXIST ON EOS DEVICES TASK 1 in PLAY 1"
+    #   arista.eos.eos_config:
+    #     commands:
+    #       - snmp-server community SDN-PROS RO
+    #       - snmp-server location SFO_HQ
+    #       - snmp-server contact JOHN_DOE
+    # - name: "ENSURE STATIC ROUTE EXISTS ON EOS DEVICES TASK 2 in PLAY 1"
+    #   arista.eos.eos_config:
+    #     lines:
+    #       - ip route 172.16.1.0 255.255.255.0 172.16.2.1
+    # - name: "ENSURE CONFIG EXISTS ON EOS DEVICES TASK 3 in PLAY 1"
+    #   arista.eos.eos_config:
+    #     src: "./configs/arista_eos.cfg"
+    # - name: "View diff between running and startup config using the diff parameter using TASK4 in PLAY1"
+    #   arista.eos.eos_config:
+    #     diff_against: startup
+
+    # - name: CONFIGURE THE LOOPBACK INTERFACE and demonstrate idempotency
+    #   arista.eos.eos_config:
+    #     commands:
+    #       - "interface Loopback300"
+    #       - "description Configured by Ansible"
+    #       - "ip address 33.33.33.33 255.255.255.255"
+
+    # - name: CONFIGURE THE LOOPBACK INTERFACE and demonstrate idempotency again
+    #   arista.eos.eos_config:
+    #     commands:
+    #       - "interface Loopback300"
+    #       - " description Configured by Ansible"
+    #       - " ip address 33.33.33.33 255.255.255.255"
+      
+    - name: CONFIGURE THE LOOPBACK400 INTERFACE without worrying about the space using the parent parameter
+      arista.eos.eos_config:
+        parents:
+          - "interface loopback300"
+        commands:
+          - "description Configured by Ansible"
+          - "ip address 33.33.33.33 255.255.255.255"

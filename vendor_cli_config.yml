@@ -1,0 +1,23 @@
+# This play is used to demo the usage of Ansible network_cli module in multivendor environments
+---
+- name: DEPLOYING SNMP CONFIGURATIONS ON EOS AND JUNOS
+  hosts: DC1,DC3
+  connection: ansible.netcommon.network_cli
+  gather_facts: no
+            
+  vars:
+    vendor_commands:
+      eos: |
+        snmp-server community SDN-PROS
+        snmp-server location SFO_HQ        
+        snmp-server contact Elan_Beer
+      junos: |
+          set snmp location SDN-PROS
+          set snmp contact Elan_Beer
+          set snmp community public authorization read-only
+
+  tasks:
+
+      - name: TASK 1 ENSURE SNMP COMMANDS EXIST ON EOS AND VMX DEVICES
+        ansible.netcommon.cli_config:
+          config: "{{ vendor_commands[ansible_network_os] }}"
